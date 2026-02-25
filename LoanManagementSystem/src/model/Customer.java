@@ -10,6 +10,9 @@ public class Customer extends User {
 
     public Customer(int userId, String name, String phonenumber, int creditScore) {
         super(userId, name);
+        if (creditScore < 300 || creditScore > 900) {
+        throw new IllegalArgumentException("Invalid credit score");
+    }
         this.phonenumber = phonenumber;
         this.creditScore = creditScore;
         this.loans = new ArrayList<>(); // prevents nullpointerexception
