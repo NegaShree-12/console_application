@@ -9,6 +9,25 @@ public class Admin extends User {
         this.role=role;
     }
 
+    public void reviewLoan(Loan loan,Customer customer)
+    {
+        if(loan.getLoanStatus()!=LoanStatus.PENDING)
+        {
+            System.out.println("Loan is not pending for review");
+            return;
+        }
+        if(customer.getCreditScore()>=700)
+        {
+            loan.approve();
+            System.out.println("Loan approved");
+        }
+        else
+        {
+            loan.reject();
+            System.out.println("Loan rejected");
+        }
+    }
+
     public String getRole()
     {
         return role;

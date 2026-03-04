@@ -32,5 +32,6 @@ public class Payment {
     public void processPayment(Loan loan)
     {
         loan.addPayment(this);
+        
     }
 }

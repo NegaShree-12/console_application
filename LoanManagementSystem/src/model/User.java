@@ -10,12 +10,12 @@ public abstract class User {
         this.name=name;
     }
 
-    public void getUserId()
+    public int getUserId()
     {
         return userId;
     }
 
-    public void getName()
+    public String getName()
     {
         return name;
     }

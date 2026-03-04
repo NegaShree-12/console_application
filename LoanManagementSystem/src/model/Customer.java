@@ -3,10 +3,12 @@ package LoanManagementSystem.src.model;
 import java.util.List;
 import java.util.ArrayList;
 
+
 public class Customer extends User {
     private String phonenumber; //private bcause customer id only needs phone number
     private int creditScore;
     private List<Loan> loans; //one customer can have multiple loans
+    private int paymentCounter=1;
 
     public Customer(int userId, String name, String phonenumber, int creditScore) {
         super(userId, name);
@@ -24,25 +26,85 @@ public class Customer extends User {
 
     public void applyLoan(Loan loan)
     {
+        if(loan==null)
+        {
+            System.out.println("Invalid loan");
+            return;
+        }
         loans.add(loan);
+
+        System.out.println("Loan applied successfully");
+        System.out.println("Loan get Loan Id:"+loan.getLoanId());
+        System.out.println("Loan status: "+ loan.getLoanStatus());
+        
     }
 
     public void viewLoans()
     {
         for(Loan loan:loans)
         {
-            Loan.viewSummary(loan);//this will be in Loan class
-            
+            loan.getLoanSummary();//this will be in Loan class
         }
     }
     
-    public void payEmi(int loanId,double amount)
+    public int generatepaymentcounter()
     {
-        //implemented later
+        return paymentCounter++;
+    }
+    
+    public void payEmi(int loanId)
+    {
+        for(Loan loan:loans)
+        {
+            if(loan.getLoanId()==loanId)
+            {
+                double amount=loan.calculateEMI();
+                if (amount > loan.getremainingBalance()) {
+                System.out.println("Amount exceeds remaining balance.");
+                return;
+                }
+                if(loan.getLoanStatus()!=LoanStatus.APPROVED)
+                {
+                    System.out.println("Loan is not approved");
+                    return;
+                }
+                Payment payment=new Payment(generatepaymentcounter(),amount,PaymentType.EMI);
+                payment.processPayment(loan);
+                System.out.println("Payment processed successfully");
+                System.out.println("Remaining Amount:"+loan.getremainingBalance());
+                
+                return;
+            }
+        }
+        System.out.println("Loan not found");
     }
 
     public void payPrincipal(int loanId,double amount)
     {
-        //implemented later
+        for(Loan loan:loans)
+        {
+            if(loan.getLoanId()==loanId)
+            {
+                if (amount > loan.getremainingBalance()) {
+                System.out.println("Amount exceeds remaining balance.");
+                return;
+                }
+                if (loan.getLoanStatus() == LoanStatus.CLOSED)
+                {
+                    System.out.println("Loan already closed. No further payments allowed.");
+                    return;
+                }
+                if(loan.getLoanStatus()!=LoanStatus.APPROVED)
+                {
+                    System.out.println("Loan is not approved");
+                    return;
+                }
+                Payment payment=new Payment(generatepaymentcounter(),amount,PaymentType.PRINCIPAL);
+                payment.processPayment(loan);
+                System.out.println("Payment processed successfully");
+                System.out.println("Remaining Amount:"+loan.getremainingBalance());
+                return;
+            }
+        }
     }
 }
