@@ -53,58 +53,88 @@ public class Customer extends User {
     }
     
     public void payEmi(int loanId)
+{
+    for(Loan loan : loans)
     {
-        for(Loan loan:loans)
+        if(loan.getLoanId() == loanId)
         {
-            if(loan.getLoanId()==loanId)
+            if (loan.getLoanStatus() == LoanStatus.CLOSED)
             {
-                double amount=loan.calculateEMI();
-                if (amount > loan.getremainingBalance()) {
-                System.out.println("Amount exceeds remaining balance.");
-                return;
-                }
-                if(loan.getLoanStatus()!=LoanStatus.APPROVED)
-                {
-                    System.out.println("Loan is not approved");
-                    return;
-                }
-                Payment payment=new Payment(generatepaymentcounter(),amount,PaymentType.EMI);
-                payment.processPayment(loan);
-                System.out.println("Payment processed successfully");
-                System.out.println("Remaining Amount:"+loan.getremainingBalance());
-                
+                System.out.println("Loan already closed. No further payments allowed.");
                 return;
             }
+
+            if (loan.getLoanStatus() != LoanStatus.APPROVED)
+            {
+                System.out.println("Loan is not approved");
+                return;
+            }
+
+            double emiAmount = loan.calculateEMI();
+
+            if (emiAmount > loan.getremainingBalance())
+            {
+                System.out.println("Amount exceeds remaining balance.");
+                return;
+            }
+
+            Payment payment = new Payment(
+                    generatepaymentcounter(),
+                    emiAmount,
+                    PaymentType.EMI
+            );
+
+            payment.processPayment(loan);
+
+            System.out.println("EMI paid successfully");
+            System.out.println("Remaining Amount: " + loan.getremainingBalance());
+
+            return;
         }
-        System.out.println("Loan not found");
     }
 
+    System.out.println("Loan not found");
+}
+
     public void payPrincipal(int loanId,double amount)
+{
+    for(Loan loan : loans)
     {
-        for(Loan loan:loans)
+        if(loan.getLoanId() == loanId)
         {
-            if(loan.getLoanId()==loanId)
+            if (loan.getLoanStatus() == LoanStatus.CLOSED)
             {
-                if (amount > loan.getremainingBalance()) {
-                System.out.println("Amount exceeds remaining balance.");
-                return;
-                }
-                if (loan.getLoanStatus() == LoanStatus.CLOSED)
-                {
-                    System.out.println("Loan already closed. No further payments allowed.");
-                    return;
-                }
-                if(loan.getLoanStatus()!=LoanStatus.APPROVED)
-                {
-                    System.out.println("Loan is not approved");
-                    return;
-                }
-                Payment payment=new Payment(generatepaymentcounter(),amount,PaymentType.PRINCIPAL);
-                payment.processPayment(loan);
-                System.out.println("Payment processed successfully");
-                System.out.println("Remaining Amount:"+loan.getremainingBalance());
+                System.out.println("Loan already closed. No further payments allowed.");
                 return;
             }
+
+            if (loan.getLoanStatus() != LoanStatus.APPROVED)
+            {
+                System.out.println("Loan is not approved");
+                return;
+            }
+
+            if (amount > loan.getremainingBalance())
+            {
+                System.out.println("Amount exceeds remaining balance.");
+                return;
+            }
+
+            Payment payment = new Payment(
+                    generatepaymentcounter(),
+                    amount,
+                    PaymentType.PRINCIPAL
+            );
+
+            payment.processPayment(loan);
+
+            System.out.println("Principal paid successfully");
+            System.out.println("Remaining Amount: " + loan.getremainingBalance());
+
+            return;
         }
     }
+
+    System.out.println("Loan not found");
+}
 }
