@@ -16,7 +16,7 @@ public class Main {
         Customer customer = new Customer(1, "Neha", "6382345678", 750);
         Admin admin = new Admin(101, "admin1", "Loan Manager");
 
-        Loan loan = null;
+        Loan loan = null; //bcause new loan is created inside case 1 before case 1 someone first access other cases then it will be loan not found so initially it is null
 
         int choice;
 
